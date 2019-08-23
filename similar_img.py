@@ -292,7 +292,7 @@ if __name__ == "__main__":
         # [3] expandvars expands $HOME
         dir_path = os.path.abspath(os.path.expanduser(os.path.expandvars(dir_path)))
         if not os.path.exists(dir_path):
-            quit('Directory' + dir_path + ' is not exists.')
+            quit('Directory ' + dir_path + ' does not exist.')
         elif not os.path.isdir(dir_path):
             quit(dir_path + ' is not a directory.')
 
