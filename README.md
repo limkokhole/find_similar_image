@@ -47,3 +47,6 @@ Find similar image by specific image.
                             Default is 80.0%. You should try lower it to 75% or 70% if it doesn't match a few.
     --version             show program's version number and exit
 
+## Demonstration video (Click image to play at YouTube): ##
+
+[![watch in youtube](https://i.ytimg.com/vi/myMZCLCAcu0/hqdefault.jpg)](https://www.youtube.com/watch?v=myMZCLCAcu0 "Find similar image")
