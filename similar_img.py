@@ -53,6 +53,9 @@ def quit(msgs, exit=True):
         sys.exit()
 
 from PIL import ImageStat
+#Research by http://www.hackerfactor.com/blog/?/archives/432-Looks-Like-It.html
+#Hash code by http://01101001.net/DifferenceHash.py and http://01101001.net/AverageHash.py
+#hole: but I decided combine both and pick higher of them as "matched" metric.
 def AverageHash(theImage):
 
 	# Convert the image to 8-bit grayscale.
