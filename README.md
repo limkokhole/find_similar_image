@@ -43,7 +43,7 @@ Find similar image by specific image.
     -u, --unique-ln       Create symlink with unique filename by uuid.    
                             This option do nothing without -l or -lnm
     -p PERCENTAGE, --percentage PERCENTAGE
-                            Match by diff more or equal to this percentage floating value (without %).    
+                            Match by diff less or equal to this percentage floating value (without %).    
                             Default is 80.0%. You should try lower it to 75% or 70% if it doesn't match a few.
     --version             show program's version number and exit
 

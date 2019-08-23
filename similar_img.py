@@ -247,7 +247,7 @@ if __name__ == "__main__":
                             , help='Create symlink with unique filename by uuid.\
     \nThis option do nothing without -l or -lnm')
     arg_parser.add_argument('-p', '--percentage',  default=80.0, type=float
-                            , help='Match by diff more or equal to this percentage floating value (without %%).\
+                            , help='Match by diff less or equal to this percentage floating value (without %%).\
     \nDefault is 80.0%%. You should try lower it to 75%% or 70%% if it doesn\'t match a few.')
     arg_parser.add_argument('image_path', nargs='?', help='Specify single image path to check.')
     arg_parser.add_argument('--version', action='version', version='%(prog)s 1.0')
