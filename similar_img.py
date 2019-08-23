@@ -242,7 +242,7 @@ if __name__ == "__main__":
     arg_parser.add_argument('-lnm', '--link-not-macth', dest='lnm', help='Create symlink of not-matched images in this directory.')
     arg_parser.add_argument('-f', '--follows-symlink', dest='follows_symlink', action='store_true'
                             , help='Follows symlink for files and directory.\
-    \nDefault is don\'t follows symlink to avoid scan duplicated (-s will popup twice) files in -l directory.')
+    \nDefault is don\'t follows symlink to avoid scan duplicated (-s will popup twice) files in -l/-lnm directory.')
     arg_parser.add_argument('-u', '--unique-ln', dest='unique_ln', action='store_true'
                             , help='Create symlink with unique filename by uuid.\
     \nThis option do nothing without -l or -lnm')

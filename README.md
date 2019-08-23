@@ -39,7 +39,7 @@ Find similar image by specific image.
                             Create symlink of not-matched images in this directory.
     -f, --follows-symlink
                             Follows symlink for files and directory.    
-                            Default is don't follows symlink to avoid scan duplicated (-s will popup twice) files in -l directory.
+                            Default is don't follows symlink to avoid scan duplicated (-s will popup twice) files in -l/-lnm directory.
     -u, --unique-ln       Create symlink with unique filename by uuid.    
                             This option do nothing without -l or -lnm
     -p PERCENTAGE, --percentage PERCENTAGE
