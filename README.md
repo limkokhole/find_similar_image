@@ -41,7 +41,7 @@ Find similar image by specific image.
                             Follows symlink for files and directory.    
                             Default is don't follows symlink to avoid scan duplicated (-s will popup twice) files in -l directory.
     -u, --unique-ln       Create symlink with unique filename by uuid.    
-                            This option do nothing without -l
+                            This option do nothing without -l or -lnm
     -p PERCENTAGE, --percentage PERCENTAGE
                             Match by diff more or equal to this percentage floating value (without %).    
                             Default is 80.0%. You should try lower it to 75% or 70% if it doesn't match a few.

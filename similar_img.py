@@ -242,7 +242,7 @@ if __name__ == "__main__":
     \nDefault is don\'t follows symlink to avoid scan duplicated (-s will popup twice) files in -l directory.')
     arg_parser.add_argument('-u', '--unique-ln', dest='unique_ln', action='store_true'
                             , help='Create symlink with unique filename by uuid.\
-    \nThis option do nothing without -l')
+    \nThis option do nothing without -l or -lnm')
     arg_parser.add_argument('-p', '--percentage',  default=80.0, type=float
                             , help='Match by diff more or equal to this percentage floating value (without %%).\
     \nDefault is 80.0%%. You should try lower it to 75%% or 70%% if it doesn\'t match a few.')
