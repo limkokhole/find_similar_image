@@ -232,10 +232,10 @@ if __name__ == "__main__":
     \nDefault are Average and Difference hash(pick higher) which allow cache with -c/-w.')
     arg_parser.add_argument('-m', action='store_true',
                             help='Only shows matched line.')
-    arg_parser.add_argument('-c', nargs='?', default=False, help='Read this cache file without rescan images. Default is hash.cache if -c without value.\
+    arg_parser.add_argument('-c', nargs='?', default=False, help='Read hash values from this cache file without re-scan images. Default is hash.cache if -c without value.\
     \nYou should use -w once to generate new cache file before use -c')
     arg_parser.add_argument('-w', nargs='?', default=False,
-                            help='Write current result to this cache file. Default is hash.cache if -w without value.')
+                            help='Write hash values to this cache file for re-use by -c. Default is hash.cache if -w without value.')
     arg_parser.add_argument('-s', '--show', type=int, help='Shows Nth matched images in popup viewer.\
     \n0 means unlimited but be aware it probably hang your system if too much viewers popup.')
     arg_parser.add_argument('-l', '--link-match', dest='ln', help='Create symlink of matched images in this directory.')

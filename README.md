@@ -28,9 +28,9 @@ Find similar image by specific image.
                             It has higher tolerance in different size but lower tolerance in bright.    
                             Default are Average and Difference hash(pick higher) which allow cache with -c/-w.
     -m                    Only shows matched line.
-    -c [C]                Read this cache file without rescan images. Default is hash.cache if -c without value.    
+    -c [C]                Read hash values from this cache file without re-scan images. Default is hash.cache if -c without value.    
                             You should use -w once to generate new cache file before use -c
-    -w [W]                Write current result to this cache file. Default is hash.cache if -w without value.
+    -w [W]                Write hash values to this cache file for re-use by -c. Default is hash.cache if -w without value.
     -s SHOW, --show SHOW  Shows Nth matched images in popup viewer.    
                             0 means unlimited but be aware it probably hang your system if too much viewers popup.
     -l LN, --link-match LN
