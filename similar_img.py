@@ -263,7 +263,9 @@ if __name__ == "__main__":
         # -c without value -> None
         # no -c -> False
         quit('You can\'t use -c together with -w')
-
+    if args.norm and ( (args.c is not False) or (args.w is not False) ):
+        quit('You can\'t use -n together with -w/-c')
+        
     if args.image_path:
         img_path = args.image_path
     else:
