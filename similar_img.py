@@ -187,6 +187,8 @@ def create_symlink(symlink_dir_path, path):
                 os.symlink( path, os.path.join(symlink_dir_path, os.path.basename(path)) )
         except OSError:
             print('Failed to create symlink: ' + path)
+            if args.verbose:
+                print('This error is normal if file already exists.')
 
 def to_grayscale(arr):
 	"If arr is a color image (3D array), convert it to grayscale (2D array)."
@@ -239,7 +241,7 @@ if __name__ == "__main__":
     arg_parser.add_argument('-s', '--show', type=int, help='Shows Nth matched images in popup viewer.\
     \n0 means unlimited but be aware it probably hang your system if too much viewers popup.')
     arg_parser.add_argument('-l', '--link-match', dest='ln', help='Create symlink of matched images in this directory.')
-    arg_parser.add_argument('-lnm', '--link-not-macth', dest='lnm', help='Create symlink of not-matched images in this directory.')
+    arg_parser.add_argument('-lnm', '--link-not-match', dest='lnm', help='Create symlink of not-matched images in this directory.')
     arg_parser.add_argument('-f', '--follows-symlink', dest='follows_symlink', action='store_true'
                             , help='Follows symlink for files and directory.\
     \nDefault is don\'t follows symlink to avoid scan duplicated (-s will popup twice) files in -l/-lnm directory.')

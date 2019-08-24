@@ -35,7 +35,7 @@ Find similar image by specific image.
                             0 means unlimited but be aware it probably hang your system if too much viewers popup.
     -l LN, --link-match LN
                             Create symlink of matched images in this directory.
-    -lnm LNM, --link-not-macth LNM
+    -lnm LNM, --link-not-match LNM
                             Create symlink of not-matched images in this directory.
     -f, --follows-symlink
                             Follows symlink for files and directory.    
