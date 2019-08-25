@@ -1,5 +1,40 @@
 # -*- coding: utf-8 -*-
+# The MIT License (MIT)
+# Copyright (c) 2019 limkokhole@gmail.com
+# 
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+# 
+# The above copyright notice and this permission notice shall be included in all
+# copies or substantial portions of the Software.
+# 
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+# EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+# MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+# IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
+# DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
+# OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE
+# OR OTHER DEALINGS IN THE SOFTWARE.
 from __future__ import print_function #to make python2 print color like python3 do
+
+__author__ = 'Lim Kok Hole'
+__copyright__ = 'Copyright 2019'
+__credits__ = [
+    'Dr. Neal Krawetz at http://www.hackerfactor.com/about.php', #research of average/difference hash
+    'David Oftedal at http://01101001.net/', #average/difference hash code (without comparision metric)
+    'Sastanin at https://stackoverflow.com/users/25450/sastanin' #Manhattan/zero norm code (without resize and comparison metric)
+]
+__license__ = 'MIT'
+__version__ = 1.1
+__cache_file_version__ = 1.1 #only incresae this if cache file structure change
+__maintainer__ = 'Lim Kok Hole'
+__email__ = 'limkokhole@gmail.com'
+__status__ = 'Production'
+
 import sys
 import os
 import time
@@ -27,7 +62,7 @@ else:
     readline.parse_and_bind("tab: complete")
 
 import argparse
-from argparse import RawTextHelpFormatter
+from argparse import RawTextHelpFormatter #make --help's \n works and indentation pretty
 arg_parser = argparse.ArgumentParser(
     # don't specify prefix_chars='-+/' here which causes / in path is not option value
     description='Find simlar images in specific directory by specific image', formatter_class=RawTextHelpFormatter)
@@ -122,10 +157,18 @@ def DifferenceHash(theImage):
 
 
 def share_print(img_f_hash_diff, img_f_hash_avg, dir_img_f_hash_diff, dir_img_f_hash_avg, path, ei, total_matched):
+
+    if args.verbose:
+        print('dir_img_f_hash_diff: ' + str(dir_img_f_hash_diff))
+        print('dir_img_f_hash_avg: ' + str(dir_img_f_hash_avg))
+        print('img_f_hash_diff: ' + str(img_f_hash_diff))
+        print('img_f_hash_avg: ' + str(img_f_hash_avg))
+
     d_diff = ((64 - bin(img_f_hash_diff ^ dir_img_f_hash_diff).count("1"))*100.0)/64.0 #orig
     d_avg = ((64 - bin(img_f_hash_avg ^ dir_img_f_hash_avg).count("1"))*100.0)/64.0 #orig
     #d = ((4096 - bin(img_f_hash ^ dir_img_f_hash).count("1"))*100.0)/4096.0 # hole
-    d_both = ((d_diff+d_avg)/2.0)
+    #d_both = ((d_diff+d_avg)/2.0) #no longer print both avg since it's misleading
+    # ... due to current comparision metric is "pick higher of both"
 
     if args.verbose:
         print('img percentage diff: ' + str(d_diff))
@@ -136,15 +179,21 @@ def share_print(img_f_hash_diff, img_f_hash_avg, dir_img_f_hash_diff, dir_img_f_
     #if d_both >= args.percentage:
     if (d_diff >= args.percentage) or (d_avg >= args.percentage):
 
-        print('[' + str(ei) + '] \x1b[1;35m' + path + '\x1b[0m\x1b[K \x1b[1;32m[Matched]\x1b[0m\x1b[K d_both: ' + str(d_both) + ' Diff: ' + str(d_diff) + '%' + ' avg: ' + str(d_avg) + '%' )
+        if d_diff >= args.percentage: #note that this doesn't means avg not match, only means first match
+            print('[' + str(ei) + '] \x1b[1;35m' + path + '\x1b[0m\x1b[K \x1b[1;32m[Matched]\x1b[0m\x1b[K diff: ' + str(d_diff) + '%' + ' avg: ' + str(d_avg) + '%' )
+        else:
+            print('[' + str(ei) + '] \x1b[1;35m' + path + ' \x1b[0m\x1b[K diff: ' + str(d_diff) + '%' + ' \x1b[1;32m[Matched]\x1b[0m\x1b[K avg: ' + str(d_avg) + '%' )
         # total_matched not increment yet, so +1
         if args.show is not None:
             if (args.show == 0) or ((total_matched+1) <= args.show):
-                Image.open(path).show()
+                try:
+                    Image.open(path).show()
+                except OSError:
+                    print('\x1b[1;41m-s failed. Probably file no longer exists\x1b[0m\x1b[K: ' + path)
         return True
     else:
         if not args.m:
-            print('[' + str(ei) + '] \x1b[1;35m' + path + '\x1b[0m\x1b[K \x1b[1;31m[Not Match]\x1b[0m\x1b[K d_both: ' + str(d_both) + ' Diff: ' + str(d_diff) + '%' + ' avg: ' + str(d_avg) + '%' )
+            print('[' + str(ei) + '] \x1b[1;35m' + path + '\x1b[0m\x1b[K \x1b[1;31m[Not Match]\x1b[0m\x1b[K diff: ' + str(d_diff) + '%' + ' avg: ' + str(d_avg) + '%' )
         return False
 
 def diff_file(path, hash_cache_f, write_once, dir_path, hash_type):
@@ -157,11 +206,15 @@ def diff_file(path, hash_cache_f, write_once, dir_path, hash_type):
     if args.w is not False:
 
         if not write_once:
-            hash_cache_f.writelines( os.path.abspath(os.path.expanduser(os.path.expandvars(dir_path))) + '\n') #store directory path on 1st line
-            hash_cache_f.writelines('\n')
-            hash_cache_f.writelines('\n')
+            dir_full_path = os.path.abspath(os.path.expanduser(os.path.expandvars(dir_path))) 
+            path_total_line = dir_full_path.count('\n') + 1
+            hash_cache_f.writelines( str(__cache_file_version__) + '\n')
+            hash_cache_f.writelines( str(path_total_line) + '\n')
+            hash_cache_f.writelines(dir_full_path + '\n') #store directory path on 1st line
             write_once = True
 
+        path_total_line = path.count('\n') + 1
+        hash_cache_f.writelines( str(path_total_line) + '\n')
         hash_cache_f.writelines(path + '\n')
         # no nid worry str() truncate, it's not float
         hash_cache_f.writelines(str(dir_img_f_hash_diff) + '\n')
@@ -245,9 +298,9 @@ if __name__ == "__main__":
     \n0 means unlimited but be aware it probably hang your system if too much viewers popup.')
     arg_parser.add_argument('-l', '--link-match', dest='ln', help='Create symlink of matched images in this directory.')
     arg_parser.add_argument('-lnm', '--link-not-match', dest='lnm', help='Create symlink of not-matched images in this directory.')
-    arg_parser.add_argument('-f', '--follows-symlink', dest='follows_symlink', action='store_true'
-                            , help='Follows symlink for files and directory.\
-    \nDefault is don\'t follows symlink to avoid scan duplicated (-s will popup twice) files in -l/-lnm directory.')
+    arg_parser.add_argument('-f', '--follow-symlink', dest='follow_symlink', action='store_true'
+                            , help='Follow symlink for files and directory.\
+    \nDefault is don\'t follow symlink to avoid scan duplicated (-s will popup twice) files in -l/-lnm directory.')
     arg_parser.add_argument('-u', '--unique-ln', dest='unique_ln', action='store_true'
                             , help='Create symlink with unique filename by uuid.\
     \nThis option do nothing without -l or -lnm')
@@ -255,7 +308,7 @@ if __name__ == "__main__":
                             , help='Match by diff less or equal to this percentage floating value (without %%).\
     \nDefault is 80.0%%. You should try lower it to 75%% or 70%% if it doesn\'t match a few.')
     arg_parser.add_argument('image_path', nargs='?', help='Specify single image path to check.')
-    arg_parser.add_argument('--version', action='version', version='%(prog)s 1.0')
+    arg_parser.add_argument('--version', action='version', version='%(prog)s ' + str(__version__))
     args, remaining = arg_parser.parse_known_args() #--version will stop here
     
     if remaining:
@@ -332,6 +385,13 @@ if __name__ == "__main__":
         else:
             arg_percentage = args.percentage
 
+        # [rule 1] to make manhattan comparision works, you should resize it to same image as source image
+        # , so source image no need resize, while the dir images must resize bsaed on the shape of source image
+        # [rule 2] since 100% means perfect match while 0.0 means perfect match in manhhattan norm
+        # , so we need 100 - args_percentage to make the metric "reverse".
+        # [rule 3] 255 is the maximum value of array_1_max(all 255) - array_2_min(all 0)
+        # , which depends on the resized shape. So we need mutiply them with percentage
+        # ... to get the final acceptable norm
         acceptable_manhattan_diff = RESIZE_Y * RESIZE_X * 255 * (100 - arg_percentage) / 100.0
         #hole: no nid check zero norm, AFAIS it's same
         #acceptable_zero_diff = RESIZE_Y * RESIZE_X * (100 - arg_percentage) / 100.0
@@ -349,7 +409,9 @@ if __name__ == "__main__":
         #    quit('Probably the image path not exists:\n' + img_path)
         img_f_np_ndarray = to_grayscale(img_f_np_ndarray.astype(float))
         # normalize to compensate for exposure difference
+        # print('before norm: ' + repr(img_f_np_ndarray))
         img_f_np_ndarray = normalize(img_f_np_ndarray)
+        # print('after norm: ' + repr(img_f_np_ndarray))
 
     else:
         try:
@@ -436,9 +498,10 @@ if __name__ == "__main__":
         #high_accuracy = args.percentage >= 100
 
         # Default already followlinks=False for directory in os.walk() arg
-        for subdir, dirs, files in os.walk(dir_path, topdown=True, followlinks=args.follows_symlink): #[toprove:0] will topdown slower ?
+        for subdir, dirs, files in os.walk(dir_path, topdown=True, followlinks=args.follow_symlink): #[toprove:0] will topdown slower ?
 
-            if (not max_depth) or ( subdir[d_path_len:].count(OS_SEP) < max_depth ):
+            # --max-depth 0 should do nothing, conforms to find command
+            if (max_depth is None) or ( subdir[d_path_len:].count(OS_SEP) < max_depth ):
 
                 for file in files:
 
@@ -448,7 +511,9 @@ if __name__ == "__main__":
 
                     # Due to this script main feature is store as symlink, so it may walk to -l directory and causes duplicated -s
                     # Default should not follows symlink
-                    if not args.follows_symlink and os.path.islink(path):
+                    if not args.follow_symlink and os.path.islink(path):
+                        if args.verbose:
+                            print('Skipping symlink file: ' + path)
                         continue
 
                     if args.verbose:
@@ -471,7 +536,11 @@ if __name__ == "__main__":
                             continue
 
                         dir_img_f_np_ndarray = to_grayscale(dir_img_f_np_ndarray.astype(float))
+
+                        # print('before norm dir: ' + repr(dir_img_f_np_ndarray))
                         dir_img_f_np_ndarray = normalize(dir_img_f_np_ndarray)
+                        # print('after norm dir: ' + repr(dir_img_f_np_ndarray))
+
 
                         #AFAIS img_f_np_ndarray.size doesn't change after return from normalize() above
                         #n_m, n_0 = compare_images(img_f_np_ndarray, dir_img_f_np_ndarray)
@@ -567,37 +636,97 @@ if __name__ == "__main__":
         dir_img_f_hash_avg = 0
         from_path_len = 0
 
-        # [todo:0] disallow newline filename came here
+        # the first 3 lines is: cache file structure version -> total of from_path's lines -> from_path
+        # the next 4 lines and so on would be: total of path's lines -> path -> diff hash -> avg hash
+        # The reason is to support file path containing multiple 
+        from_path = ''
+        done_read_header_version = False
+        done_read_header_path_count = False
+        done_read_header_path = False
+        done_read_header = False
 
-        cache_block_lines = 3
-        for ei, l in enumerate(hash_cache_f.readlines()):
-            if ei >= cache_block_lines:
-                nth_line = (ei % cache_block_lines)
-                if nth_line == 0:
-                    path = l[:-1] # remove trailing \n
-                elif nth_line == 1:
-                    dir_img_f_hash_diff = int(l)
-                else:
-                    co = path[from_path_len+1:].count(OS_SEP)
-                    #print('path: ' + path)
-                    #print('co: ' + str(co) + ' from_path_len: ' + str(from_path_len))
-                    if (not max_depth) or (co < max_depth):
-                        dir_img_f_hash_avg = int(l)
-                        if share_print(img_f_hash_diff, img_f_hash_avg, dir_img_f_hash_diff, dir_img_f_hash_avg, path, int((ei-1)/2) + 1, total_matched):
-                            total_matched += 1
-                            create_symlink(ln_dir_path, path)
-                        else:
-                            total_not_match += 1
-                            create_symlink(lnm_dir_path, path)
+        path = ''
+        done_read_path_count = False
+        done_read_path = False        
+        done_read_hash_diff = False
+
+        ei = 0
+        for l in hash_cache_f.readlines():
+            #print('reading ? ' + str(l))
+            if done_read_header:
+
+                if done_read_path_count:
+
+                    if done_read_path:
+
+                        if done_read_hash_diff: # done read hash diff and avg
+
+                            dir_img_f_hash_avg = int(l)
+
+                            ei+=1
+
+                            path = path[:-1] #strip \n (only last line of multiple lines need to strip)
+
+                            co = path[from_path_len+1:].count(OS_SEP)
+                            #print('co path: ' + path)
+                            #print('co: ' + str(co) + ' from_path_len: ' + str(from_path_len))
+                            # --max-depth 0 should do nothing, conforms to find command
+                            if (max_depth is None) or (co < max_depth):
+
+                                if share_print(img_f_hash_diff, img_f_hash_avg, dir_img_f_hash_diff, dir_img_f_hash_avg, path,  ei, total_matched):
+                                    total_matched += 1
+                                    create_symlink(ln_dir_path, path)
+                                else:
+                                    total_not_match += 1
+                                    create_symlink(lnm_dir_path, path)
+                            else:
+                                if args.verbose:
+                                    print('Skipping directory by -md: ' + path)
+
+                            #reset before next read file block
+                            path = ''
+                            done_read_path_count = False
+                            done_read_path = False
+                            done_read_hash_diff = False
+
+                        else: # read hash avg
+                            dir_img_f_hash_diff = int(l)
+                            done_read_hash_diff = True
+
                     else:
-                        if args.verbose:
-                            print('Skipping directory by -md: ' + path)
-            else: # ei == 0 or 1 or 2, is the header to store root directory path
-                if (ei % cache_block_lines) == 0:
-                    from_path = l[:-1]
-                    from_path_len = len(from_path)
+                        path_total-=1
+                        path+=l #[:-1] 
+                        if path_total == 0:
+                            done_read_path = True
+
+                else:
+                    #print('reading: ' + str(l))
+                    path_total = int(l) 
+                    done_read_path_count = True
+                            
+            elif not done_read_header_version:
+                done_read_header_version  = True
+                try:
+                    curr_cache_file_version = float(l)
+                except ValueError:
+                    curr_cache_file_version = 1.0 #first version
+                if curr_cache_file_version != __cache_file_version__:
+                    quit('Cache file structure already changed in new version. Please use -w to re-cache.')
+
+            elif not done_read_header_path_count:
+                done_read_header_path_count = True
+                path_total = int(l) 
+            else:
+                path_total-=1
+                if path_total == 0:
+                    from_path+=l[:-1] # remove trailing \n
+                    from_path_len+=len(from_path) #count len in last line, not accum every line
                     if args.verbose:
                         print('cache header path is: ' + from_path)
+                    done_read_header = True
+                    done_read_path_count = False
+                else:
+                    from_path+=l
 
     if not args.norm:
         try:
