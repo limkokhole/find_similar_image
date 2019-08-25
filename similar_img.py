@@ -208,7 +208,7 @@ def normalize(arr):
     # prevent divide by 0 error
     # hole: can generate test image by `convert -size 128x256 xc:white empty128x256_white.jpg`
     #, to reproduce since all items' value is same and max() - min() will produce rng as 0 here
-    #, which caauses all values is nan and impossible match by float metric, even though no exception
+    #, which causes all values is nan and impossible match by float metric, even though no exception
     if rng == 0:
         rng = 1
 
