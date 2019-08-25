@@ -736,7 +736,10 @@ if __name__ == "__main__":
         if hash_cache_f is not None:
             hash_cache_f.close()
     print()
-    if args.c is False:  # -c always 0
+    if args.c is False:
+        # Since -c always 0 so -c no nid print
+        # Even file change to non-image intentionally also fine since it only read cache without re-scan at all 
+        #, except scan input image.
         if total_not_a_image > 0:
             print(
                 '\x1b[0;52mTotal of\x1b[0m\x1b[K \x1b[0;35mnot an image: \x1b[0m\x1b[K' + str(total_not_a_image))
