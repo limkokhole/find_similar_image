@@ -638,7 +638,7 @@ if __name__ == "__main__":
 
         # the first 3 lines is: cache file structure version -> total of from_path's lines -> from_path
         # the next 4 lines and so on would be: total of path's lines -> path -> diff hash -> avg hash
-        # The reason is to support file path containing multiple 
+        # The reason put total of lines is to support file path containing multiple lines
         from_path = ''
         done_read_header_version = False
         done_read_header_path_count = False
