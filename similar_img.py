@@ -610,6 +610,10 @@ if __name__ == "__main__":
                                     print('\x1b[0;35mProbably not an image.\x1b[0m\x1b[K')
                                 total_not_a_image += 1
                                 continue
+                            except:
+                                if args.verbose:
+                                    print('\x1b[0;35mUnexpected error:\x1b[0m', sys.exc_info()[0],'\x1b[K')
+                                continue
                         else:
                             try:
                                 dir_img_f_hash_diff, dir_img_f_hash_avg, write_once = diff_file(path, hash_cache_f, write_once, dir_path, False)
@@ -617,6 +621,10 @@ if __name__ == "__main__":
                                 if args.verbose:
                                     print('\x1b[0;35mProbably not an image.\x1b[0m\x1b[K')
                                 total_not_a_image += 1
+                                continue
+                            except:
+                                if args.verbose:
+                                    print('\x1b[0;35mUnexpected error:\x1b[0m', sys.exc_info()[0],'\x1b[K')
                                 continue
 
                         if share_print(img_f_hash_diff, img_f_hash_avg, dir_img_f_hash_diff, dir_img_f_hash_avg, path, ei, total_matched):
