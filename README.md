@@ -1,6 +1,10 @@
 # find_similar_image
 Find similar image by specific image.
 
+### Prerequisite:
+
+    python3 -m pip install -r requirements.txt
+
 ### Usage:
 
     xb@dnxb:~/Downloads/find_similar_image$ python3 similar_img.py --help
