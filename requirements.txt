@@ -1,0 +1,5 @@
+future
+Pillow
+opencv-contrib-python
+scipy
+
